@@ -146,6 +146,7 @@ export default function Report() {
         return
       }
 
+      const supabase = await getSupabase()
       const { data, error } = await supabase.functions.invoke('send-report-email', {
         body: {
           recipientEmail,

@@ -418,9 +418,23 @@ export default function Quiz() {
   const handleComplete = useCallback(() => {
     localStorage.setItem('quiz_report', 'demo')
     localStorage.setItem('quiz_company_name', state.companyName)
+    localStorage.setItem('quiz_form_data', JSON.stringify({
+      name: state.name,
+      email: state.email,
+      companyName: state.companyName,
+      website: state.website,
+      revenueBand: state.revenueBand,
+      teamSize: state.teamSize,
+      services: state.services,
+      pmTool: state.pmTool,
+      crm: state.crm,
+      biggestBottleneck: state.biggestBottleneck,
+      mainGoal: state.mainGoal,
+      implementationHelp: state.implementationHelp,
+    }))
     localStorage.removeItem('quiz_state')
     navigate('/report/demo')
-  }, [navigate, state.companyName])
+  }, [navigate, state])
 
   const validateStep = (): boolean => {
     switch (state.step) {

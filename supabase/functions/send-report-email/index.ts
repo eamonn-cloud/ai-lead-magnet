@@ -161,6 +161,7 @@ Deno.serve(async (req) => {
       queue_name: 'transactional_emails',
       payload: {
         message_id: messageId2,
+        run_id: runId,
         to: notificationEmail,
         from: fromAddress,
         sender_domain: senderDomain,

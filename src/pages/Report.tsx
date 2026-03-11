@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import corexLogo from '../assets/corex-logo.webp'
 import { MOCK_REPORT } from '../lib/mockReport'
@@ -7,28 +7,10 @@ import { getScoreBg, getScoreBadge, getScoreColor } from '../lib/scoring'
 import { supabase } from '../integrations/supabase/client'
 import type { Report as ReportType, MaturityLabel, ReportPlanItem, QuizAnswers } from '../lib/types'
 
-declare global {
-  interface Window {
-    Calendly?: {
-      initInlineWidgets: () => void
-    }
-  }
-}
-
 // Build report from saved quiz data, fallback to mock
 function buildReport(): ReportType {
-  if (typeof window === 'undefined') return MOCK_REPORT
-
-  const getStoredItem = (key: string) => {
-    try {
-      return window.localStorage.getItem(key)
-    } catch {
-      return null
-    }
-  }
-
-  const formDataRaw = getStoredItem('quiz_form_data')
-  const answersRaw = getStoredItem('quiz_answers')
+  const formDataRaw = localStorage.getItem('quiz_form_data')
+  const answersRaw = localStorage.getItem('quiz_answers')
 
   if (formDataRaw && answersRaw) {
     try {
@@ -50,13 +32,15 @@ function buildReport(): ReportType {
     }
   }
 
-  const companyName = getStoredItem('quiz_company_name') || 'Your Agency'
+  const companyName = localStorage.getItem('quiz_company_name') || 'Your Agency'
   return {
     ...MOCK_REPORT,
     company_profile: { ...MOCK_REPORT.company_profile, company_name: companyName },
     executive_summary: MOCK_REPORT.executive_summary.split('Momentum Agency').join(companyName),
   }
 }
+
+const report = buildReport()
 
 // ─── Helper components ────────────────────────────────────────────────────────
 
@@ -143,38 +127,8 @@ export default function Report() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'30' | '60' | '90'>('30')
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
-  const report = useMemo(() => buildReport(), [])
 
   const planMap = { '30': report.day_30_plan, '60': report.day_60_plan, '90': report.day_90_plan }
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    const initCalendly = () => {
-      window.Calendly?.initInlineWidgets?.()
-    }
-
-    if (window.Calendly?.initInlineWidgets) {
-      initCalendly()
-      return
-    }
-
-    const existingScript = document.querySelector<HTMLScriptElement>('script[src="https://assets.calendly.com/assets/external/widget.js"]')
-    if (existingScript) {
-      existingScript.addEventListener('load', initCalendly)
-      return () => existingScript.removeEventListener('load', initCalendly)
-    }
-
-    const script = document.createElement('script')
-    script.src = 'https://assets.calendly.com/assets/external/widget.js'
-    script.async = true
-    script.onload = initCalendly
-    document.body.appendChild(script)
-
-    return () => {
-      script.onload = null
-    }
-  }, [])
 
   const handleSendEmail = useCallback(async () => {
     setEmailStatus('sending')
@@ -441,7 +395,7 @@ export default function Report() {
           </div>
         </div>
 
-        {/* ── CTA + Calendly ──────────────────────────────────────── */}
+        {/* ── CTA ──────────────────────────────────────────────────── */}
         <div className="relative animate-in overflow-hidden" style={{ animationDelay: '0.8s' }}>
           <div className="absolute inset-0 bg-blue-primary/10 rounded-2xl" />
           <div className="absolute inset-0 rounded-2xl border border-blue-primary/30" />
@@ -454,14 +408,16 @@ export default function Report() {
             <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-xl mx-auto">
               {report.next_step_cta.body}
             </p>
+            <a
+              href="#"
+              className="btn-primary text-base px-12 py-4 inline-flex mb-4"
+              onClick={e => e.preventDefault()}
+            >
+              {report.next_step_cta.button_text} →
+            </a>
             {report.next_step_cta.urgency_note && (
-              <p className="text-white/50 text-sm mb-6">{report.next_step_cta.urgency_note}</p>
+              <p className="text-white/50 text-sm mt-4">{report.next_step_cta.urgency_note}</p>
             )}
-            <div
-              className="calendly-inline-widget rounded-xl overflow-hidden"
-              data-url="https://calendly.com/eamonn-corexoperations/30min?hide_event_type_details=1&hide_gdpr_banner=1"
-              style={{ minWidth: '320px', height: '700px' }}
-            />
           </div>
         </div>
 

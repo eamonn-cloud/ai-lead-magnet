@@ -372,14 +372,11 @@ const INITIAL_STATE: QuizState = {
 export default function Quiz() {
   const navigate = useNavigate()
   const [state, setState] = useState<QuizState>(() => {
-    if (typeof window === 'undefined') return INITIAL_STATE
-
-    try {
-      const saved = window.localStorage.getItem('quiz_state')
-      return saved ? JSON.parse(saved) : INITIAL_STATE
-    } catch {
-      return INITIAL_STATE
+    const saved = localStorage.getItem('quiz_state')
+    if (saved) {
+      try { return JSON.parse(saved) } catch { return INITIAL_STATE }
     }
+    return INITIAL_STATE
   })
   const [animating, setAnimating] = useState(false)
   const [error, setError] = useState('')

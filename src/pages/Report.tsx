@@ -98,8 +98,53 @@ const IMPACT_COLORS: Record<string, string> = {
 export default function Report() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'30' | '60' | '90'>('30')
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
   const planMap = { '30': report.day_30_plan, '60': report.day_60_plan, '90': report.day_90_plan }
+
+  const handleSendEmail = useCallback(async () => {
+    setEmailStatus('sending')
+    try {
+      const formDataRaw = localStorage.getItem('quiz_form_data')
+      const formData = formDataRaw ? JSON.parse(formDataRaw) : {}
+      const recipientEmail = formData.email
+      if (!recipientEmail) {
+        alert('No email address found. Please retake the quiz.')
+        setEmailStatus('error')
+        return
+      }
+
+      const { data, error } = await supabase.functions.invoke('send-report-email', {
+        body: {
+          recipientEmail,
+          recipientName: formData.name || '',
+          companyName: report.company_profile.company_name,
+          formData,
+          reportSummary: {
+            overallScore: report.overall_score,
+            maturityLabel: report.maturity_label,
+            executiveSummary: report.executive_summary,
+            categories: report.category_summary.map(c => ({
+              category: c.category,
+              score: c.score,
+              label: c.label,
+            })),
+            priorityActions: report.priority_actions.map(a => ({
+              action: a.action,
+              effort: a.effort,
+              impact: a.impact,
+            })),
+          },
+        },
+      })
+
+      if (error) throw error
+      setEmailStatus('sent')
+    } catch (err) {
+      console.error('Failed to send email:', err)
+      setEmailStatus('error')
+    }
+  }, [])
 
   return (
     <div className="min-h-screen">

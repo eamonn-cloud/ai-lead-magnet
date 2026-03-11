@@ -447,6 +447,25 @@ export default function Report() {
           </p>
         </div>
 
+      {/* Calendly Modal */}
+      {showCalendly && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowCalendly(false)}>
+          <div className="relative w-full max-w-2xl mx-4 bg-background rounded-2xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setShowCalendly(false)}
+              className="absolute top-3 right-3 z-10 text-foreground/60 hover:text-foreground text-2xl leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+            >
+              ×
+            </button>
+            <div
+              className="calendly-inline-widget"
+              data-url="https://calendly.com/eamonn-corexoperations/30min?hide_event_type_details=1&hide_gdpr_banner=1"
+              style={{ minWidth: '320px', height: '700px' }}
+            />
+          </div>
+        </div>
+      )}
+
       </main>
     </div>
   )

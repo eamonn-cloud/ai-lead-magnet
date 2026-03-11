@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import corexLogo from '../assets/corex-logo.webp'
 import { MOCK_REPORT } from '../lib/mockReport'
@@ -7,10 +7,28 @@ import { getScoreBg, getScoreBadge, getScoreColor } from '../lib/scoring'
 import { supabase } from '../integrations/supabase/client'
 import type { Report as ReportType, MaturityLabel, ReportPlanItem, QuizAnswers } from '../lib/types'
 
+declare global {
+  interface Window {
+    Calendly?: {
+      initInlineWidgets: () => void
+    }
+  }
+}
+
 // Build report from saved quiz data, fallback to mock
 function buildReport(): ReportType {
-  const formDataRaw = localStorage.getItem('quiz_form_data')
-  const answersRaw = localStorage.getItem('quiz_answers')
+  if (typeof window === 'undefined') return MOCK_REPORT
+
+  const getStoredItem = (key: string) => {
+    try {
+      return window.localStorage.getItem(key)
+    } catch {
+      return null
+    }
+  }
+
+  const formDataRaw = getStoredItem('quiz_form_data')
+  const answersRaw = getStoredItem('quiz_answers')
 
   if (formDataRaw && answersRaw) {
     try {
@@ -32,15 +50,13 @@ function buildReport(): ReportType {
     }
   }
 
-  const companyName = localStorage.getItem('quiz_company_name') || 'Your Agency'
+  const companyName = getStoredItem('quiz_company_name') || 'Your Agency'
   return {
     ...MOCK_REPORT,
     company_profile: { ...MOCK_REPORT.company_profile, company_name: companyName },
     executive_summary: MOCK_REPORT.executive_summary.split('Momentum Agency').join(companyName),
   }
 }
-
-const report = buildReport()
 
 // ─── Helper components ────────────────────────────────────────────────────────
 

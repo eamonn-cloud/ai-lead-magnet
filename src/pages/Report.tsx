@@ -168,6 +168,19 @@ export default function Report() {
             ↓ Download PDF
           </button>
           <button
+            onClick={handleSendEmail}
+            disabled={emailStatus === 'sending' || emailStatus === 'sent'}
+            className={`text-sm py-2 px-5 rounded-lg font-semibold transition-all ${
+              emailStatus === 'sent'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : emailStatus === 'sending'
+                ? 'bg-white/5 text-white/40 border border-white/10 cursor-wait'
+                : 'btn-outline'
+            } hidden md:flex`}
+          >
+            {emailStatus === 'sending' ? 'Sending…' : emailStatus === 'sent' ? '✓ Sent!' : '✉ Email Report'}
+          </button>
+          <button
             onClick={() => navigate('/quiz')}
             className="text-white/60 hover:text-white/80 text-sm transition-colors"
           >

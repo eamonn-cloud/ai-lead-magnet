@@ -4,7 +4,11 @@ import corexLogo from '../assets/corex-logo.webp'
 import { MOCK_REPORT } from '../lib/mockReport'
 import { generateReport } from '../lib/reportGenerator'
 import { getScoreBg, getScoreBadge, getScoreColor } from '../lib/scoring'
-import { supabase } from '../integrations/supabase/client'
+// Lazy-load supabase client to prevent crash if env vars are missing
+async function getSupabase() {
+  const { supabase } = await import('../integrations/supabase/client')
+  return supabase
+}
 import type { Report as ReportType, MaturityLabel, ReportPlanItem, QuizAnswers } from '../lib/types'
 
 // Build report from saved quiz data, fallback to mock
@@ -142,6 +146,7 @@ export default function Report() {
         return
       }
 
+      const supabase = await getSupabase()
       const { data, error } = await supabase.functions.invoke('send-report-email', {
         body: {
           recipientEmail,

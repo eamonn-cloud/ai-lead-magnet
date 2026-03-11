@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import corexLogo from '../assets/corex-logo.webp'
 import { MOCK_REPORT } from '../lib/mockReport'
@@ -131,6 +131,18 @@ export default function Report() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'30' | '60' | '90'>('30')
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [showCalendly, setShowCalendly] = useState(false)
+
+  // Load Calendly widget script
+  useEffect(() => {
+    if (!showCalendly) return
+    const existing = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]')
+    if (existing) return
+    const script = document.createElement('script')
+    script.src = 'https://assets.calendly.com/assets/external/widget.js'
+    script.async = true
+    document.head.appendChild(script)
+  }, [showCalendly])
 
   const planMap = { '30': report.day_30_plan, '60': report.day_60_plan, '90': report.day_90_plan }
 
@@ -413,13 +425,12 @@ export default function Report() {
             <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-xl mx-auto">
               {report.next_step_cta.body}
             </p>
-            <a
-              href="#"
+            <button
               className="btn-primary text-base px-12 py-4 inline-flex mb-4"
-              onClick={e => e.preventDefault()}
+              onClick={() => setShowCalendly(true)}
             >
               {report.next_step_cta.button_text} →
-            </a>
+            </button>
             {report.next_step_cta.urgency_note && (
               <p className="text-white/50 text-sm mt-4">{report.next_step_cta.urgency_note}</p>
             )}
@@ -435,6 +446,25 @@ export default function Report() {
             This report was generated based on your assessment answers. Results are indicative and intended to guide operational planning.
           </p>
         </div>
+
+      {/* Calendly Modal */}
+      {showCalendly && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowCalendly(false)}>
+          <div className="relative w-full max-w-2xl mx-4 bg-background rounded-2xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setShowCalendly(false)}
+              className="absolute top-3 right-3 z-10 text-foreground/60 hover:text-foreground text-2xl leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+            >
+              ×
+            </button>
+            <div
+              className="calendly-inline-widget"
+              data-url="https://calendly.com/eamonn-corexoperations/30min?hide_event_type_details=1&hide_gdpr_banner=1"
+              style={{ minWidth: '320px', height: '700px' }}
+            />
+          </div>
+        </div>
+      )}
 
       </main>
     </div>

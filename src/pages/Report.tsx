@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import corexLogo from '../assets/corex-logo.webp'
 import { MOCK_REPORT } from '../lib/mockReport'
 import { getScoreBg, getScoreBadge, getScoreColor } from '../lib/scoring'
 import type { Report, MaturityLabel, ReportPlanItem } from '../lib/types'

@@ -736,7 +736,7 @@ export default function Quiz() {
             <div>
               <p className="section-label mb-3">Almost Done</p>
               <h2 className="text-3xl font-black text-white uppercase mb-2">Where should we send your plan?</h2>
-              <p className="text-white/50 text-sm mb-8">Your report generates immediately. No spam, no sequences — just your plan.</p>
+              <p className="text-white/50 text-sm mb-8">Your report generates immediately. No spam, no sequences - just your plan.</p>
 
               <div className="space-y-5">
                 <div>

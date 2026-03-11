@@ -165,7 +165,7 @@ Deno.serve(async (req) => {
         to: notificationEmail,
         from: fromAddress,
         sender_domain: senderDomain,
-        subject: `🔥 New Lead: ${companyName} — Score ${reportSummary.overallScore}/100`,
+        subject: `🔥 New Lead: ${companyName} - Score ${reportSummary.overallScore}/100`,
         html: leadHtml,
         purpose: 'transactional',
         label: 'new-lead-notification',

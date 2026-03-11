@@ -134,11 +134,13 @@ Deno.serve(async (req) => {
     // Enqueue both emails via the transactional queue
     const messageId1 = crypto.randomUUID()
     const messageId2 = crypto.randomUUID()
+    const runId = crypto.randomUUID()
 
     const { error: err1 } = await supabase.rpc('enqueue_email', {
       queue_name: 'transactional_emails',
       payload: {
         message_id: messageId1,
+        run_id: runId,
         to: recipientEmail,
         from: fromAddress,
         sender_domain: senderDomain,

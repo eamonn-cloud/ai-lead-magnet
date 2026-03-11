@@ -10,7 +10,7 @@ const companyName = localStorage.getItem('quiz_company_name') || 'Your Agency'
 const report: Report = {
   ...MOCK_REPORT,
   company_profile: { ...MOCK_REPORT.company_profile, company_name: companyName },
-  executive_summary: MOCK_REPORT.executive_summary.replaceAll('Momentum Agency', companyName),
+  executive_summary: MOCK_REPORT.executive_summary.split('Momentum Agency').join(companyName),
 }
 
 // ─── Helper components ────────────────────────────────────────────────────────

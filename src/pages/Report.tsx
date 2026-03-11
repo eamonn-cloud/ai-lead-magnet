@@ -413,13 +413,12 @@ export default function Report() {
             <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-xl mx-auto">
               {report.next_step_cta.body}
             </p>
-            <a
-              href="#"
+            <button
               className="btn-primary text-base px-12 py-4 inline-flex mb-4"
-              onClick={e => e.preventDefault()}
+              onClick={() => setShowCalendly(true)}
             >
               {report.next_step_cta.button_text} →
-            </a>
+            </button>
             {report.next_step_cta.urgency_note && (
               <p className="text-white/50 text-sm mt-4">{report.next_step_cta.urgency_note}</p>
             )}

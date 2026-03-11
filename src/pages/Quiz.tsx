@@ -318,9 +318,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
         <div className="w-24 h-24 rounded-full bg-navy-dark border border-blue-primary/30 flex items-center justify-center relative">
           <div className="absolute inset-0 rounded-full border border-blue-primary/20 animate-ping" style={{ animationDuration: '2s' }} />
           <div className="absolute inset-[-8px] rounded-full border border-blue-primary/10 animate-ping" style={{ animationDuration: '2.5s' }} />
-          <div className="w-8 h-8 rounded-lg bg-blue-primary flex items-center justify-center">
-            <span className="text-white font-black text-sm">C</span>
-          </div>
+          <img src={corexLogo} alt="Corex Operations" className="h-8 w-auto" />
         </div>
       </div>
 

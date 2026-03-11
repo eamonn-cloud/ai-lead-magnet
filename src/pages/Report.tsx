@@ -5,9 +5,13 @@ import { MOCK_REPORT } from '../lib/mockReport'
 import { getScoreBg, getScoreBadge, getScoreColor } from '../lib/scoring'
 import type { Report, MaturityLabel, ReportPlanItem } from '../lib/types'
 
-// For MVP, always render the mock report
-// In production, fetch from Supabase by report ID
-const report: Report = MOCK_REPORT
+// For MVP, use mock report but override company name from quiz input
+const companyName = localStorage.getItem('quiz_company_name') || 'Your Agency'
+const report: Report = {
+  ...MOCK_REPORT,
+  company_profile: { ...MOCK_REPORT.company_profile, company_name: companyName },
+  executive_summary: MOCK_REPORT.executive_summary.split('Momentum Agency').join(companyName),
+}
 
 // ─── Helper components ────────────────────────────────────────────────────────
 

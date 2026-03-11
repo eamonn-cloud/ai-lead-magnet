@@ -417,9 +417,10 @@ export default function Quiz() {
 
   const handleComplete = useCallback(() => {
     localStorage.setItem('quiz_report', 'demo')
+    localStorage.setItem('quiz_company_name', state.companyName)
     localStorage.removeItem('quiz_state')
     navigate('/report/demo')
-  }, [navigate])
+  }, [navigate, state.companyName])
 
   const validateStep = (): boolean => {
     switch (state.step) {

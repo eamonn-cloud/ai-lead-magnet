@@ -108,10 +108,7 @@ export default function Report() {
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-white/8 bg-navy-deepest/60 backdrop-blur-sm sticky top-0">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-md bg-blue-primary flex items-center justify-center">
-            <span className="text-white font-black text-xs">C</span>
-          </div>
-          <span className="font-bold text-white uppercase tracking-widest text-xs">Corex Operations</span>
+          <img src={corexLogo} alt="Corex Operations" className="h-7 w-auto" />
         </div>
         <div className="flex items-center gap-3">
           <button

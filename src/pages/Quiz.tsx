@@ -48,7 +48,7 @@ const CATEGORY_STEPS: CategoryStep[] = [
       {
         key: 'q2',
         text: 'Are client handoffs between team members handled through a clear, standardised process?',
-        noLabel:        'Ad hoc — things fall through the cracks',
+        noLabel:        'Ad hoc - things fall through the cracks',
         partiallyLabel: 'Informal norms exist, no formal process',
         yesLabel:       'Clear handoff steps with checklists',
       },

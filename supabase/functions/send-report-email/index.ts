@@ -144,7 +144,7 @@ Deno.serve(async (req) => {
         to: recipientEmail,
         from: fromAddress,
         sender_domain: senderDomain,
-        subject: `Your Operational Assessment — ${companyName}`,
+        subject: `Your Operational Assessment - ${companyName}`,
         html: clientHtml,
         purpose: 'transactional',
         label: 'report-summary',

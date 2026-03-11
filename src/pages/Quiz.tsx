@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import corexLogo from '../assets/corex-logo.webp'
 import type { QuizState } from '../lib/types'
 
 // ─── Data ────────────────────────────────────────────────────────────────────

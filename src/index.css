@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-navy-deepest text-white font-sans antialiased;
+    background: linear-gradient(135deg, #040f3d 0%, #001C61 60%, #002e7f 100%);
+    min-height: 100vh;
+  }
+
+  ::selection {
+    @apply bg-blue-primary/40 text-white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #040f3d;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #005eb7;
+    border-radius: 3px;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-4 bg-blue-primary text-white font-semibold rounded-lg
+           transition-all duration-200 hover:bg-blue-600 hover:shadow-blue-glow hover:-translate-y-0.5
+           active:translate-y-0 active:shadow-none focus:outline-none focus:ring-2 focus:ring-blue-primary/50;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-4 border border-blue-primary/50 text-blue-300 font-semibold rounded-lg
+           transition-all duration-200 hover:border-blue-primary hover:text-white hover:bg-blue-primary/10
+           focus:outline-none focus:ring-2 focus:ring-blue-primary/50;
+  }
+
+  .card {
+    @apply bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm shadow-card;
+  }
+
+  .card-hover {
+    @apply card transition-all duration-200 hover:bg-white/8 hover:border-blue-primary/40 hover:-translate-y-1 hover:shadow-blue-glow cursor-pointer;
+  }
+
+  .label-pill {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
+  }
+
+  .section-label {
+    @apply text-cyan text-xs font-semibold uppercase tracking-[0.2em];
+  }
+
+  .animate-in {
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .option-card {
+    @apply w-full text-left px-5 py-4 rounded-xl border border-white/10 bg-white/5
+           transition-all duration-150 hover:border-blue-primary/60 hover:bg-blue-primary/10
+           focus:outline-none focus:border-blue-primary focus:bg-blue-primary/10;
+  }
+
+  .option-card.selected {
+    @apply border-blue-primary bg-blue-primary/15 shadow-[0_0_0_1px_rgba(0,94,183,0.5)];
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-white via-blue-200 to-cyan bg-clip-text text-transparent;
+  }
+
+  .bg-white\/8 {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    border-radius: inherit;
+  }
+}

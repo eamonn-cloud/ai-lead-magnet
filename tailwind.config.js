@@ -65,9 +65,10 @@ export default {
         },
       },
       boxShadow: {
-        'blue-glow': '0 0 40px rgba(0,94,183,0.4)',
-        'card':      '0 4px 24px rgba(4,15,61,0.6)',
-        'inner-glow':'inset 0 1px 0 rgba(185,250,248,0.1)',
+        'blue-glow':   '0 0 40px rgba(0,94,183,0.4)',
+        'orange-glow': '0 0 40px rgba(249,115,22,0.4)',
+        'card':        '0 4px 24px rgba(4,15,61,0.6)',
+        'inner-glow':  'inset 0 1px 0 rgba(185,250,248,0.1)',
       },
     },
   },

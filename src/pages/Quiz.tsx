@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import corexLogo from '../assets/corex-logo.webp'
 import type { QuizState } from '../lib/types'
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -317,9 +318,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
         <div className="w-24 h-24 rounded-full bg-navy-dark border border-blue-primary/30 flex items-center justify-center relative">
           <div className="absolute inset-0 rounded-full border border-blue-primary/20 animate-ping" style={{ animationDuration: '2s' }} />
           <div className="absolute inset-[-8px] rounded-full border border-blue-primary/10 animate-ping" style={{ animationDuration: '2.5s' }} />
-          <div className="w-8 h-8 rounded-lg bg-blue-primary flex items-center justify-center">
-            <span className="text-white font-black text-sm">C</span>
-          </div>
+          <img src={corexLogo} alt="Corex Operations" className="h-8 w-auto" />
         </div>
       </div>
 
@@ -485,10 +484,7 @@ export default function Quiz() {
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-white/8">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-md bg-blue-primary flex items-center justify-center">
-            <span className="text-white font-black text-xs">C</span>
-          </div>
-          <span className="font-bold text-white uppercase tracking-widest text-xs hidden sm:block">Corex Operations</span>
+          <img src={corexLogo} alt="Corex Operations" className="h-7 w-auto" />
         </div>
 
         {/* Progress */}

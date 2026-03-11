@@ -131,6 +131,18 @@ export default function Report() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'30' | '60' | '90'>('30')
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [showCalendly, setShowCalendly] = useState(false)
+
+  // Load Calendly widget script
+  useEffect(() => {
+    if (!showCalendly) return
+    const existing = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]')
+    if (existing) return
+    const script = document.createElement('script')
+    script.src = 'https://assets.calendly.com/assets/external/widget.js'
+    script.async = true
+    document.head.appendChild(script)
+  }, [showCalendly])
 
   const planMap = { '30': report.day_30_plan, '60': report.day_60_plan, '90': report.day_90_plan }
 

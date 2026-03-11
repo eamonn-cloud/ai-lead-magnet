@@ -33,10 +33,7 @@ export default function Landing() {
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-primary flex items-center justify-center">
-            <span className="text-white font-black text-sm">C</span>
-          </div>
-          <span className="font-bold text-white uppercase tracking-widest text-sm">Corex Operations</span>
+          <img src={corexLogo} alt="Corex Operations" className="h-8 w-auto" />
         </div>
         <button
           onClick={() => navigate('/quiz')}

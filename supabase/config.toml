@@ -2,3 +2,6 @@ project_id = "gwskudkgzkkvwrsvriot"
 
 [functions.process-email-queue]
 verify_jwt = false
+
+[functions.send-report-email]
+verify_jwt = false

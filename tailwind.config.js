@@ -18,6 +18,11 @@ export default {
           light:   '#0067B6',
         },
         cyan:  '#B9FAF8',
+        orange: {
+          DEFAULT: '#F97316',
+          bright:  '#FB923C',
+          glow:    '#F97316',
+        },
         slate: '#4B5964',
         pink:  '#A8407E',
       },

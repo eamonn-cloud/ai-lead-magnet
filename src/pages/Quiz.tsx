@@ -432,6 +432,7 @@ export default function Quiz() {
       mainGoal: state.mainGoal,
       implementationHelp: state.implementationHelp,
     }))
+    localStorage.setItem('quiz_answers', JSON.stringify(state.answers))
     localStorage.removeItem('quiz_state')
     navigate('/report/demo')
   }, [navigate, state])

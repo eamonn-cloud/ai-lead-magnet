@@ -143,8 +143,38 @@ export default function Report() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'30' | '60' | '90'>('30')
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const report = useMemo(() => buildReport(), [])
 
   const planMap = { '30': report.day_30_plan, '60': report.day_60_plan, '90': report.day_90_plan }
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const initCalendly = () => {
+      window.Calendly?.initInlineWidgets?.()
+    }
+
+    if (window.Calendly?.initInlineWidgets) {
+      initCalendly()
+      return
+    }
+
+    const existingScript = document.querySelector<HTMLScriptElement>('script[src="https://assets.calendly.com/assets/external/widget.js"]')
+    if (existingScript) {
+      existingScript.addEventListener('load', initCalendly)
+      return () => existingScript.removeEventListener('load', initCalendly)
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://assets.calendly.com/assets/external/widget.js'
+    script.async = true
+    script.onload = initCalendly
+    document.body.appendChild(script)
+
+    return () => {
+      script.onload = null
+    }
+  }, [])
 
   const handleSendEmail = useCallback(async () => {
     setEmailStatus('sending')

@@ -333,10 +333,7 @@ export default function Report() {
         {/* Footer */}
         <div className="text-center pb-8">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="w-6 h-6 rounded-md bg-blue-primary flex items-center justify-center">
-              <span className="text-white font-black text-[10px]">C</span>
-            </div>
-            <span className="font-bold text-white/60 uppercase tracking-widest text-xs">Corex Operations</span>
+            <img src={corexLogo} alt="Corex Operations" className="h-6 w-auto opacity-60" />
           </div>
           <p className="text-white/25 text-xs">
             This report was generated based on your assessment answers. Results are indicative and intended to guide operational planning.

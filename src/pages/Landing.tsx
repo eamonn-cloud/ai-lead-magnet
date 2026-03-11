@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import corexLogo from '../assets/corex-logo.webp'
 
 const CATEGORIES = [
   { icon: '▶', label: 'Delivery Operations' },

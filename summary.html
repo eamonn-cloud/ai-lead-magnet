@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agency Ops Audit — Corex Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy-deepest: #040f3d;
+      --navy-dark:    #001C61;
+      --navy-mid:     #002e7f;
+      --blue:         #005eb7;
+      --cyan:         #B9FAF8;
+      --slate:        #4B5964;
+      --white:        #ffffff;
+      --white-60:     rgba(255,255,255,0.6);
+      --white-30:     rgba(255,255,255,0.3);
+      --white-10:     rgba(255,255,255,0.1);
+      --white-06:     rgba(255,255,255,0.06);
+    }
+
+    html, body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--navy-deepest) 0%, var(--navy-dark) 60%, var(--navy-mid) 100%);
+      color: var(--white);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ── */
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 32px 64px;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 56px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-mark {
+      width: 32px; height: 32px;
+      background: var(--blue);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 14px; color: white;
+    }
+    .logo-name {
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+    .nav-tag {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--cyan);
+      background: rgba(185,250,248,0.08);
+      border: 1px solid rgba(185,250,248,0.25);
+      padding: 6px 14px;
+      border-radius: 100px;
+    }
+
+    /* ── Hero ── */
+    .hero { margin-bottom: 56px; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, #fff 0%, #a8d4f5 50%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 16px;
+      color: var(--white-60);
+      line-height: 1.7;
+      max-width: 600px;
+      margin-bottom: 28px;
+    }
+
+    /* Trust strip */
+    .trust-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      margin-bottom: 0;
+    }
+    .trust-item { display: flex; align-items: center; gap: 10px; }
+    .trust-value { font-size: 22px; font-weight: 900; color: var(--white); }
+    .trust-label { font-size: 12px; color: var(--white-30); }
+
+    /* ── Grid ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 640px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--white-06);
+      border: 1px solid var(--white-10);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .card h3 {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    /* ── What it does ── */
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--white-60);
+      line-height: 1.5;
+    }
+    .feature-list li .icon {
+      color: var(--blue);
+      font-size: 12px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── Categories ── */
+    .cat-grid { display: flex; flex-direction: column; gap: 8px; }
+    .cat-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+    }
+    .cat-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+
+    /* ── Score preview ── */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 640px) { .score-grid { grid-template-columns: repeat(2,1fr); } }
+    .score-cell {
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .score-cell .cat-name { font-size: 10px; color: var(--white-30); margin-bottom: 6px; }
+    .score-bar-track { height: 3px; background: var(--white-10); border-radius: 2px; margin-bottom: 6px; }
+    .score-bar-fill { height: 100%; border-radius: 2px; }
+    .score-bar-fill.reactive   { background: #f87171; }
+    .score-bar-fill.developing { background: #fbbf24; }
+    .score-bar-fill.scalable   { background: #34d399; }
+    .score-num { font-size: 18px; font-weight: 800; color: var(--white); }
+    .score-lbl { font-size: 10px; font-weight: 600; }
+    .score-lbl.reactive   { color: #f87171; }
+    .score-lbl.developing { color: #fbbf24; }
+    .score-lbl.scalable   { color: #34d399; }
+
+    /* ── Report sections ── */
+    .report-list { display: flex; flex-direction: column; gap: 10px; }
+    .report-item { display: flex; gap: 10px; align-items: flex-start; }
+    .report-check { color: var(--cyan); font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+    .report-item-title { font-size: 13px; font-weight: 600; color: var(--white); }
+    .report-item-sub   { font-size: 11px; color: var(--white-30); }
+
+    /* ── Timeline ── */
+    .timeline { display: flex; flex-direction: column; gap: 14px; }
+    .timeline-item { display: flex; gap: 14px; align-items: flex-start; }
+    .timeline-day {
+      width: 48px; height: 48px; flex-shrink: 0;
+      border-radius: 10px;
+      background: rgba(0,94,183,0.2);
+      border: 1px solid rgba(0,94,183,0.35);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .timeline-day .day-num { font-size: 13px; font-weight: 800; color: var(--blue); line-height: 1; }
+    .timeline-day .day-lbl { font-size: 8px; color: var(--white-30); text-transform: uppercase; letter-spacing: 0.1em; }
+    .timeline-content .tl-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
+    .timeline-content .tl-sub   { font-size: 12px; color: var(--white-30); line-height: 1.5; }
+
+    /* ── Cold email ── */
+    .email-box {
+      background: rgba(0,94,183,0.08);
+      border: 1px solid rgba(0,94,183,0.25);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 14px;
+    }
+    .email-subject {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+    .email-body { font-size: 13px; color: var(--white-60); line-height: 1.8; }
+
+    /* ── ICP ── */
+    .icp-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .icp-pill {
+      font-size: 12px; font-weight: 500;
+      padding: 5px 14px;
+      border-radius: 100px;
+      background: rgba(0,94,183,0.15);
+      border: 1px solid rgba(0,94,183,0.3);
+      color: #a8d4f5;
+    }
+
+    /* ── Stack ── */
+    .stack-row { display: flex; flex-direction: column; gap: 8px; }
+    .stack-item {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--white-10);
+    }
+    .stack-label { font-size: 12px; color: var(--white-30); }
+    .stack-value { font-size: 12px; font-weight: 600; color: var(--white); }
+
+    /* ── CTA ── */
+    .cta-section {
+      position: relative;
+      overflow: hidden;
+      background: rgba(0,94,183,0.1);
+      border: 1px solid rgba(0,94,183,0.3);
+      border-radius: 20px;
+      padding: 48px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .cta-glow {
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 240px; height: 240px;
+      background: rgba(0,94,183,0.2);
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .cta-section p {
+      font-size: 14px;
+      color: var(--white-60);
+      max-width: 480px;
+      margin: 0 auto 28px;
+      line-height: 1.7;
+      position: relative;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 36px;
+      background: var(--blue);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.9; }
+    .cta-note { font-size: 11px; color: var(--white-30); margin-top: 14px; position: relative; }
+
+    /* ── Divider ── */
+    .divider { height: 1px; background: var(--white-10); margin: 32px 0; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding-top: 32px;
+      font-size: 11px;
+      color: var(--white-30);
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="logo">
+      <div class="logo-mark">C</div>
+      <span class="logo-name">Corex Operations</span>
+    </div>
+    <span class="nav-tag">Agency Ops Audit</span>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <p class="section-label">Lead Magnet — V1 Build Summary</p>
+    <h1>A tailored 90-day plan<br /><span>for marketing agencies.</span></h1>
+    <p>A free diagnostic tool that scores operational maturity across 7 categories and generates a personalised 90-day operational plan — built specifically for marketing agencies at €500k–€10M revenue.</p>
+    <div class="trust-strip">
+      <div class="trust-item"><span class="trust-value">14</span><span class="trust-label">scored questions</span></div>
+      <div class="trust-item"><span class="trust-value">4 min</span><span class="trust-label">to complete</span></div>
+      <div class="trust-item"><span class="trust-value">7</span><span class="trust-label">operational categories</span></div>
+      <div class="trust-item"><span class="trust-value">90-day</span><span class="trust-label">action plan output</span></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ICP + Stack -->
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <h3>Target ICP</h3>
+      <div class="icp-row">
+        <span class="icp-pill">Marketing Agencies</span>
+        <span class="icp-pill">€500k – €10M revenue</span>
+        <span class="icp-pill">5 – 80 staff</span>
+        <span class="icp-pill">Delivery bottlenecks</span>
+        <span class="icp-pill">Founder dependency</span>
+        <span class="icp-pill">Scaling challenges</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Tech Stack</h3>
+      <div class="stack-row">
+        <div class="stack-item"><span class="stack-label">Frontend</span><span class="stack-value">React + Vite + Tailwind</span></div>
+        <div class="stack-item"><span class="stack-label">Database</span><span class="stack-value">Supabase</span></div>
+        <div class="stack-item"><span class="stack-label">Logic</span><span class="stack-value">Supabase Edge Functions</span></div>
+        <div class="stack-item"><span class="stack-label">AI Layer</span><span class="stack-value">Claude / OpenAI (JSON output)</span></div>
+        <div class="stack-item"><span class="stack-label">Hosting</span><span class="stack-value">Lovable → quiz.corexoperations.com</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories + Report sections -->
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <h3>Diagnostic Categories</h3>
+      <div class="cat-grid">
+        <div class="cat-row"><span class="cat-dot"></span>Delivery Operations</div>
+        <div class="cat-row"><span class="cat-dot"></span>CRM &amp; Pipeline Hygiene</div>
+        <div class="cat-row"><span class="cat-dot"></span>Reporting &amp; Forecasting</div>
+        <div class="cat-row"><span class="cat-dot"></span>Automation &amp; AI Adoption</div>
+        <div class="cat-row"><span class="cat-dot"></span>Team Cadence &amp; Accountability</div>
+        <div class="cat-row"><span class="cat-dot"></span>Founder Dependency</div>
+        <div class="cat-row"><span class="cat-dot"></span>Sales Process</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Report Includes</h3>
+      <div class="report-list">
+        <div class="report-item"><span class="report-check">✓</span><div><div class="report-item-title">Maturity Score</div><div class="report-item-sub">Overall + per category</div></div></div>
+        <div class="report-item"><span class="report-check">✓</span><div><div class="report-item-title">Top 3 Bottlenecks</div><div class="report-item-sub">With business impact</div></div></div>
+        <div class="report-item"><span class="report-check">✓</span><div><div class="report-item-title">Priority Fixes</div><div class="report-item-sub">Ordered by impact and effort</div></div></div>
+        <div class="report-item"><span class="report-check">✓</span><div><div class="report-item-title">30 / 60 / 90-Day Plan</div><div class="report-item-sub">Actions, owners, outcomes</div></div></div>
+        <div class="report-item"><span class="report-check">✓</span><div><div class="report-item-title">Recommended Systems</div><div class="report-item-sub">Tools matched to their stage</div></div></div>
+        <div class="report-item"><span class="report-check">✓</span><div><div class="report-item-title">Strategy Call CTA</div><div class="report-item-sub">Book with Corex Operations</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score preview -->
+  <div class="card" style="margin-bottom:20px">
+    <h3>Score Model — Example Output</h3>
+    <div class="score-grid">
+      <div class="score-cell">
+        <div class="cat-name">Delivery</div>
+        <div class="score-bar-track"><div class="score-bar-fill reactive" style="width:25%"></div></div>
+        <div class="score-num">25</div><div class="score-lbl reactive">Reactive</div>
+      </div>
+      <div class="score-cell">
+        <div class="cat-name">CRM</div>
+        <div class="score-bar-track"><div class="score-bar-fill developing" style="width:50%"></div></div>
+        <div class="score-num">50</div><div class="score-lbl developing">Developing</div>
+      </div>
+      <div class="score-cell">
+        <div class="cat-name">Reporting</div>
+        <div class="score-bar-track"><div class="score-bar-fill reactive" style="width:0%"></div></div>
+        <div class="score-num">0</div><div class="score-lbl reactive">Reactive</div>
+      </div>
+      <div class="score-cell">
+        <div class="cat-name">Automation</div>
+        <div class="score-bar-track"><div class="score-bar-fill developing" style="width:50%"></div></div>
+        <div class="score-num">50</div><div class="score-lbl developing">Developing</div>
+      </div>
+      <div class="score-cell">
+        <div class="cat-name">Team Cadence</div>
+        <div class="score-bar-track"><div class="score-bar-fill scalable" style="width:75%"></div></div>
+        <div class="score-num">75</div><div class="score-lbl scalable">Scalable</div>
+      </div>
+      <div class="score-cell">
+        <div class="cat-name">Founder Dep.</div>
+        <div class="score-bar-track"><div class="score-bar-fill reactive" style="width:25%"></div></div>
+        <div class="score-num">25</div><div class="score-lbl reactive">Reactive</div>
+      </div>
+      <div class="score-cell">
+        <div class="cat-name">Sales</div>
+        <div class="score-bar-track"><div class="score-bar-fill developing" style="width:50%"></div></div>
+        <div class="score-num">50</div><div class="score-lbl developing">Developing</div>
+      </div>
+      <div class="score-cell" style="background:rgba(0,94,183,0.15);border:1px solid rgba(0,94,183,0.3)">
+        <div class="cat-name">Overall</div>
+        <div class="score-bar-track"><div class="score-bar-fill developing" style="width:39%"></div></div>
+        <div class="score-num">39</div><div class="score-lbl developing">Developing</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline + Cold emails -->
+  <div class="grid-2" style="margin-bottom:20px">
+    <div class="card">
+      <h3>Build Timeline</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-day"><div class="day-num">W1</div><div class="day-lbl">Week</div></div>
+          <div class="timeline-content">
+            <div class="tl-title">Foundation</div>
+            <div class="tl-sub">Quiz questions, score model, recommendation rules, report schema</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-day"><div class="day-num">W2</div><div class="day-lbl">Week</div></div>
+          <div class="timeline-content">
+            <div class="tl-title">Backend</div>
+            <div class="tl-sub">Supabase tables, edge function, AI generation, sample payload testing</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-day"><div class="day-num">W3</div><div class="day-lbl">Week</div></div>
+          <div class="timeline-content">
+            <div class="tl-title">Frontend</div>
+            <div class="tl-sub">Landing page, quiz UI, backend connection, report page</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-day"><div class="day-num">W4</div><div class="day-lbl">Week</div></div>
+          <div class="timeline-content">
+            <div class="tl-title">Launch</div>
+            <div class="tl-sub">PDF export, email delivery, CRM routing, end-to-end testing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Cold Email Outreach</h3>
+      <div class="email-box">
+        <div class="email-subject">Variation 1 — Lead with pain</div>
+        <div class="email-body">
+          Hi [First name],<br /><br />
+          Most agencies at your stage are running on founder instinct and informal processes. It works until it doesn't.<br /><br />
+          We built a free diagnostic that takes 4 minutes and returns a tailored 90-day operational plan.<br /><br />
+          If that's useful, <strong style="color:#fff">reply with a yes</strong> and I'll send it over.<br /><br />
+          Eamonn · Corex Operations
+        </div>
+      </div>
+      <div class="email-box">
+        <div class="email-subject">Variation 2 — Lead with outcome</div>
+        <div class="email-body">
+          Hi [First name],<br /><br />
+          We built a free tool that diagnoses where your agency is losing time and capacity, then generates a personalised 90-day plan to fix it.<br /><br />
+          14 questions. 4 minutes.<br /><br />
+          <strong style="color:#fff">Reply yes</strong> and I'll send you the link.<br /><br />
+          Eamonn · Corex Operations
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User flow -->
+  <div class="card" style="margin-bottom:20px">
+    <h3>User Flow</h3>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:0">
+      <div style="text-align:center;padding:16px 20px">
+        <div style="width:40px;height:40px;background:rgba(0,94,183,0.2);border:1px solid rgba(0,94,183,0.4);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;">🔗</div>
+        <div style="font-size:11px;color:var(--white-60);font-weight:600">Lands on page</div>
+      </div>
+      <div style="color:var(--white-30);font-size:18px;padding:0 4px">→</div>
+      <div style="text-align:center;padding:16px 20px">
+        <div style="width:40px;height:40px;background:rgba(0,94,183,0.2);border:1px solid rgba(0,94,183,0.4);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;">📋</div>
+        <div style="font-size:11px;color:var(--white-60);font-weight:600">Fills quiz<br/>4 minutes</div>
+      </div>
+      <div style="color:var(--white-30);font-size:18px;padding:0 4px">→</div>
+      <div style="text-align:center;padding:16px 20px">
+        <div style="width:40px;height:40px;background:rgba(0,94,183,0.2);border:1px solid rgba(0,94,183,0.4);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;">✉️</div>
+        <div style="font-size:11px;color:var(--white-60);font-weight:600">Enters email</div>
+      </div>
+      <div style="color:var(--white-30);font-size:18px;padding:0 4px">→</div>
+      <div style="text-align:center;padding:16px 20px">
+        <div style="width:40px;height:40px;background:rgba(0,94,183,0.2);border:1px solid rgba(0,94,183,0.4);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;">⚙️</div>
+        <div style="font-size:11px;color:var(--white-60);font-weight:600">AI generates<br/>plan (25s)</div>
+      </div>
+      <div style="color:var(--white-30);font-size:18px;padding:0 4px">→</div>
+      <div style="text-align:center;padding:16px 20px">
+        <div style="width:40px;height:40px;background:rgba(0,94,183,0.2);border:1px solid rgba(0,94,183,0.4);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;">📊</div>
+        <div style="font-size:11px;color:var(--white-60);font-weight:600">Sees report</div>
+      </div>
+      <div style="color:var(--white-30);font-size:18px;padding:0 4px">→</div>
+      <div style="text-align:center;padding:16px 20px">
+        <div style="width:40px;height:40px;background:rgba(0,94,183,0.2);border:1px solid rgba(0,94,183,0.4);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:16px;">📞</div>
+        <div style="font-size:11px;color:var(--white-60);font-weight:600">Books call</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-glow"></div>
+    <p class="section-label">Next Step</p>
+    <h2>Ready to build this system<br />in your agency?</h2>
+    <p>This diagnostic identifies what needs to change. The operational strategy call with Corex Operations gives you the implementation roadmap — prioritised, sequenced, and built around your team.</p>
+    <a href="#" class="btn">Book Your Strategy Call →</a>
+    <div class="cta-note">We take on a limited number of new engagements each quarter.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="footer">
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px">
+      <div style="width:22px;height:22px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px">C</div>
+      <span style="font-weight:700;text-transform:uppercase;letter-spacing:0.18em;font-size:10px">Corex Operations</span>
+    </div>
+    Empowering Strategy. Purposeful Connection.
+  </div>
+
+</div>
+</body>
+</html>

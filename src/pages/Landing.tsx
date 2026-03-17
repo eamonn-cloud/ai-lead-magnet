@@ -61,11 +61,11 @@ export default function Landing() {
           className="text-5xl md:text-7xl font-black text-white uppercase leading-none mb-6 animate-in"
           style={{ animationDelay: '0.1s', opacity: 0 }}
         >
-          Find out what's
+          Most agencies
           <br />
-          <span className="text-gradient">slowing your agency</span>
+          <span className="text-gradient">score below 50.</span>
           <br />
-          down.
+          Where do you stand?
         </h1>
 
         {/* Subheadline */}
@@ -78,17 +78,38 @@ export default function Landing() {
 
         {/* CTA row */}
         <div
-          className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-16 animate-in"
+          className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4 animate-in"
           style={{ animationDelay: '0.3s', opacity: 0 }}
         >
           <button
             onClick={() => navigate('/quiz')}
             className="btn-primary text-base px-10 py-4"
           >
-            Start Your Audit
+            Get My Agency Score
             <span>→</span>
           </button>
           <span className="text-white/40 text-sm">Takes 4 minutes. No credit card.</span>
+        </div>
+
+        {/* Loss framing */}
+        <p
+          className="text-white/35 text-sm mb-12 animate-in"
+          style={{ animationDelay: '0.35s', opacity: 0 }}
+        >
+          Agencies that don't know their bottleneck spend 6–12 months fixing the wrong thing.
+        </p>
+
+        {/* Social proof */}
+        <div
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 mb-10 animate-in"
+          style={{ animationDelay: '0.38s', opacity: 0 }}
+        >
+          <div className="flex -space-x-1.5">
+            {['bg-blue-400', 'bg-emerald-400', 'bg-amber-400', 'bg-purple-400'].map((c, i) => (
+              <div key={i} className={`w-5 h-5 rounded-full ${c} border border-navy-dark`} />
+            ))}
+          </div>
+          <span className="text-white/50 text-xs">Join <span className="text-white font-semibold">127 agency owners</span> who've taken the audit this month</span>
         </div>
 
         {/* Trust strip */}
@@ -212,7 +233,7 @@ export default function Landing() {
             onClick={() => navigate('/quiz')}
             className="btn-primary whitespace-nowrap"
           >
-            Start Free Audit →
+            Get My Agency Score →
           </button>
         </div>
       </div>

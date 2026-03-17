@@ -1,12 +1,50 @@
-import { useState } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import corexLogo from '../assets/corex-logo.webp'
 import { MOCK_REPORT } from '../lib/mockReport'
+import { generateReport } from '../lib/reportGenerator'
 import { getScoreBg, getScoreBadge, getScoreColor } from '../lib/scoring'
-import type { Report, MaturityLabel, ReportPlanItem } from '../lib/types'
+// Lazy-load supabase client to prevent crash if env vars are missing
+async function getSupabase() {
+  const { supabase } = await import('../integrations/supabase/client')
+  return supabase
+}
+import type { Report as ReportType, MaturityLabel, ReportPlanItem, QuizAnswers } from '../lib/types'
 
-// For MVP, always render the mock report
-// In production, fetch from Supabase by report ID
-const report: Report = MOCK_REPORT
+// Build report from saved quiz data, fallback to mock
+function buildReport(): ReportType {
+  const formDataRaw = localStorage.getItem('quiz_form_data')
+  const answersRaw = localStorage.getItem('quiz_answers')
+
+  if (formDataRaw && answersRaw) {
+    try {
+      const formData = JSON.parse(formDataRaw)
+      const answers: Partial<QuizAnswers> = JSON.parse(answersRaw)
+      return generateReport(answers, {
+        companyName: formData.companyName || 'Your Agency',
+        revenueBand: formData.revenueBand || '',
+        teamSize: formData.teamSize || '',
+        services: formData.services || [],
+        biggestBottleneck: formData.biggestBottleneck || '',
+        mainGoal: formData.mainGoal || '',
+        pmTool: formData.pmTool || '',
+        crm: formData.crm || '',
+        implementationHelp: formData.implementationHelp ?? null,
+      })
+    } catch {
+      // Fall through to mock
+    }
+  }
+
+  const companyName = localStorage.getItem('quiz_company_name') || 'Your Agency'
+  return {
+    ...MOCK_REPORT,
+    company_profile: { ...MOCK_REPORT.company_profile, company_name: companyName },
+    executive_summary: MOCK_REPORT.executive_summary.split('Momentum Agency').join(companyName),
+  }
+}
+
+const report = buildReport()
 
 // ─── Helper components ────────────────────────────────────────────────────────
 
@@ -17,13 +55,13 @@ function ScoreDial({ score, label }: { score: number; label: MaturityLabel }) {
 
   return (
     <div className="relative inline-flex items-center justify-center">
-      <svg width="140" height="140" viewBox="0 0 140 140" className="-rotate-90">
-        <circle cx="70" cy="70" r="54" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />
+      <svg width="160" height="160" viewBox="0 0 160 160" className="-rotate-90">
+        <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="12" />
         <circle
-          cx="70" cy="70" r="54"
+          cx="80" cy="80" r="60"
           fill="none"
           stroke={color}
-          strokeWidth="10"
+          strokeWidth="12"
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
@@ -31,8 +69,8 @@ function ScoreDial({ score, label }: { score: number; label: MaturityLabel }) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-4xl font-black text-white">{score}</span>
-        <span className="text-white/40 text-xs">/ 100</span>
+        <span className="text-5xl font-black text-white">{score}</span>
+        <span className="text-white/50 text-sm">/ 100</span>
       </div>
     </div>
   )
@@ -42,13 +80,13 @@ function CategoryBar({ category, score, label }: { category: string; score: numb
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-white/70 text-sm font-medium">{category}</span>
+        <span className="text-white/90 text-base font-medium">{category}</span>
         <div className="flex items-center gap-2">
-          <span className="text-white font-bold text-sm">{score}</span>
-          <span className={`label-pill text-[10px] ${getScoreBadge(label)}`}>{label}</span>
+          <span className="text-white font-bold text-base">{score}</span>
+          <span className={`label-pill text-xs ${getScoreBadge(label)}`}>{label}</span>
         </div>
       </div>
-      <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
+      <div className="h-2 bg-white/8 rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full ${getScoreBg(label)} transition-all duration-1000 ease-out`}
           style={{ width: `${score}%` }}
@@ -60,16 +98,16 @@ function CategoryBar({ category, score, label }: { category: string; score: numb
 
 function PlanCard({ item, index }: { item: ReportPlanItem; index: number }) {
   return (
-    <div className="card p-5 flex gap-4">
-      <div className="w-8 h-8 rounded-full bg-blue-primary/20 border border-blue-primary/30 flex items-center justify-center shrink-0 text-blue-300 font-bold text-sm">
+    <div className="card p-6 flex gap-4">
+      <div className="w-10 h-10 rounded-full bg-blue-primary/20 border border-blue-primary/30 flex items-center justify-center shrink-0 text-blue-300 font-bold text-base">
         {index + 1}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-white font-semibold text-sm mb-1 leading-snug">{item.action}</p>
-        <p className="text-white/40 text-xs mb-2">Owner: {item.owner_role}</p>
+        <p className="text-white font-semibold text-base mb-1 leading-snug">{item.action}</p>
+        <p className="text-white/60 text-sm mb-2">Owner: {item.owner_role}</p>
         <div className="flex items-start gap-2">
-          <span className="text-cyan text-xs shrink-0 mt-0.5">→</span>
-          <p className="text-white/50 text-xs leading-relaxed">{item.outcome}</p>
+          <span className="text-cyan text-sm shrink-0 mt-0.5">→</span>
+          <p className="text-white/70 text-sm leading-relaxed">{item.outcome}</p>
         </div>
       </div>
     </div>
@@ -82,7 +120,7 @@ const EFFORT_COLORS: Record<string, string> = {
   High:   'text-red-400 bg-red-900/30 border-red-700/40',
 }
 const IMPACT_COLORS: Record<string, string> = {
-  Low:    'text-white/40 bg-white/5 border-white/10',
+  Low:    'text-white/60 bg-white/5 border-white/10',
   Medium: 'text-blue-300 bg-blue-900/30 border-blue-700/40',
   High:   'text-cyan bg-cyan/10 border-cyan/30',
 }
@@ -92,8 +130,66 @@ const IMPACT_COLORS: Record<string, string> = {
 export default function Report() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'30' | '60' | '90'>('30')
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [showCalendly, setShowCalendly] = useState(false)
+
+  // Load Calendly widget script
+  useEffect(() => {
+    if (!showCalendly) return
+    const existing = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]')
+    if (existing) return
+    const script = document.createElement('script')
+    script.src = 'https://assets.calendly.com/assets/external/widget.js'
+    script.async = true
+    document.head.appendChild(script)
+  }, [showCalendly])
 
   const planMap = { '30': report.day_30_plan, '60': report.day_60_plan, '90': report.day_90_plan }
+
+  const handleSendEmail = useCallback(async () => {
+    setEmailStatus('sending')
+    try {
+      const formDataRaw = localStorage.getItem('quiz_form_data')
+      const formData = formDataRaw ? JSON.parse(formDataRaw) : {}
+      const recipientEmail = formData.email
+      if (!recipientEmail) {
+        alert('No email address found. Please retake the quiz.')
+        setEmailStatus('error')
+        return
+      }
+
+      const supabase = await getSupabase()
+      const { data, error } = await supabase.functions.invoke('send-report-email', {
+        body: {
+          recipientEmail,
+          recipientName: formData.name || '',
+          companyName: report.company_profile.company_name,
+          formData,
+          reportSummary: {
+            overallScore: report.overall_score,
+            maturityLabel: report.maturity_label,
+            executiveSummary: report.executive_summary,
+            categories: report.category_summary.map(c => ({
+              category: c.category,
+              score: c.score,
+              label: c.label,
+            })),
+            priorityActions: report.priority_actions.map(a => ({
+              action: a.action,
+              effort: a.effort,
+              impact: a.impact,
+            })),
+          },
+        },
+      })
+
+      if (error) throw error
+      setEmailStatus('sent')
+    } catch (err) {
+      console.error('Failed to send email:', err)
+      setEmailStatus('error')
+    }
+  }, [])
 
   return (
     <div className="min-h-screen">
@@ -107,10 +203,7 @@ export default function Report() {
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-white/8 bg-navy-deepest/60 backdrop-blur-sm sticky top-0">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-md bg-blue-primary flex items-center justify-center">
-            <span className="text-white font-black text-xs">C</span>
-          </div>
-          <span className="font-bold text-white uppercase tracking-widest text-xs">Corex Operations</span>
+          <img src={corexLogo} alt="Corex Operations" className="h-7 w-auto" />
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -120,23 +213,36 @@ export default function Report() {
             ↓ Download PDF
           </button>
           <button
+            onClick={handleSendEmail}
+            disabled={emailStatus === 'sending' || emailStatus === 'sent'}
+            className={`text-sm py-2 px-5 rounded-lg font-semibold transition-all ${
+              emailStatus === 'sent'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : emailStatus === 'sending'
+                ? 'bg-white/5 text-white/40 border border-white/10 cursor-wait'
+                : 'btn-outline'
+            } hidden md:flex`}
+          >
+            {emailStatus === 'sending' ? 'Sending…' : emailStatus === 'sent' ? '✓ Sent!' : '✉ Email Report'}
+          </button>
+          <button
             onClick={() => navigate('/quiz')}
-            className="text-white/40 hover:text-white/70 text-sm transition-colors"
+            className="text-white/60 hover:text-white/80 text-sm transition-colors"
           >
             Retake ↺
           </button>
         </div>
       </nav>
 
-      <main className="relative z-10 max-w-4xl mx-auto px-6 md:px-8 py-12 space-y-12">
+      <main className="relative z-10 max-w-4xl mx-auto px-6 md:px-8 py-12 space-y-14">
 
         {/* ── Report header ─────────────────────────────────────────── */}
         <div className="animate-in">
-          <p className="section-label mb-2">Operational Assessment Report</p>
-          <h1 className="text-4xl md:text-5xl font-black text-white uppercase leading-tight mb-1">
+          <p className="section-label mb-2 text-sm">Operational Assessment Report</p>
+          <h1 className="text-4xl md:text-5xl font-black text-white uppercase leading-tight mb-2">
             {report.company_profile.company_name}
           </h1>
-          <p className="text-white/40 text-sm">
+          <p className="text-white/60 text-base">
             Generated {new Date().toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric' })}
             {' · '}{report.company_profile.revenue_band}
             {' · '}{report.company_profile.team_size} staff
@@ -154,10 +260,10 @@ export default function Report() {
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-black text-white uppercase mb-4">Overall Maturity Score</h2>
-              <p className="text-white/60 text-sm leading-relaxed mb-6">{report.executive_summary}</p>
+              <p className="text-white/80 text-base leading-relaxed mb-6">{report.executive_summary}</p>
               <div className="flex flex-wrap gap-2">
                 {report.company_profile.services.map(s => (
-                  <span key={s} className="px-3 py-1 rounded-full bg-blue-primary/15 border border-blue-primary/30 text-blue-300 text-xs font-medium">
+                  <span key={s} className="px-3 py-1.5 rounded-full bg-blue-primary/15 border border-blue-primary/30 text-blue-300 text-sm font-medium">
                     {s}
                   </span>
                 ))}
@@ -171,11 +277,11 @@ export default function Report() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-black text-white uppercase">Category Breakdown</h2>
           </div>
-          <div className="card p-8 space-y-5">
+          <div className="card p-8 space-y-6">
             {report.category_summary.map(cat => (
               <div key={cat.category}>
                 <CategoryBar category={cat.category} score={cat.score} label={cat.label} />
-                <p className="text-white/35 text-xs mt-1.5 ml-0">{cat.one_line_insight}</p>
+                <p className="text-white/60 text-sm mt-2 ml-0">{cat.one_line_insight}</p>
               </div>
             ))}
           </div>
@@ -183,7 +289,7 @@ export default function Report() {
 
         {/* ── Top bottlenecks ───────────────────────────────────────── */}
         <div className="animate-in" style={{ animationDelay: '0.3s' }}>
-          <p className="section-label mb-2">Identified</p>
+          <p className="section-label mb-2 text-sm">Identified</p>
           <h2 className="text-2xl font-black text-white uppercase mb-6">Top 3 Bottlenecks</h2>
           <div className="space-y-4">
             {report.top_bottlenecks.map((b, i) => (
@@ -197,11 +303,11 @@ export default function Report() {
                     {i + 1}
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-black text-white uppercase text-base mb-2">{b.title}</h3>
-                    <p className="text-white/60 text-sm leading-relaxed mb-3">{b.description}</p>
+                    <h3 className="font-black text-white uppercase text-lg mb-2">{b.title}</h3>
+                    <p className="text-white/80 text-base leading-relaxed mb-3">{b.description}</p>
                     <div className="flex items-start gap-2 px-4 py-3 rounded-lg bg-white/5 border border-white/8">
-                      <span className="text-amber-400 text-sm shrink-0">⚡</span>
-                      <p className="text-white/50 text-xs leading-relaxed">{b.business_impact}</p>
+                      <span className="text-amber-400 text-base shrink-0">⚡</span>
+                      <p className="text-white/70 text-sm leading-relaxed">{b.business_impact}</p>
                     </div>
                   </div>
                 </div>
@@ -212,23 +318,23 @@ export default function Report() {
 
         {/* ── Priority actions ──────────────────────────────────────── */}
         <div className="animate-in" style={{ animationDelay: '0.4s' }}>
-          <p className="section-label mb-2">Start Here</p>
+          <p className="section-label mb-2 text-sm">Start Here</p>
           <h2 className="text-2xl font-black text-white uppercase mb-6">Priority Fixes</h2>
           <div className="space-y-3">
             {report.priority_actions.map((action, i) => (
-              <div key={i} className="card p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="w-7 h-7 rounded-full bg-blue-primary/20 border border-blue-primary/30 flex items-center justify-center shrink-0 text-blue-300 font-bold text-xs">
+              <div key={i} className="card p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="w-8 h-8 rounded-full bg-blue-primary/20 border border-blue-primary/30 flex items-center justify-center shrink-0 text-blue-300 font-bold text-sm">
                   {i + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-white font-semibold text-sm mb-1">{action.action}</p>
-                  <p className="text-white/40 text-xs">{action.rationale}</p>
+                  <p className="text-white font-semibold text-base mb-1">{action.action}</p>
+                  <p className="text-white/60 text-sm">{action.rationale}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className={`label-pill text-[10px] border ${EFFORT_COLORS[action.effort]}`}>
+                  <span className={`label-pill text-xs border ${EFFORT_COLORS[action.effort]}`}>
                     {action.effort} effort
                   </span>
-                  <span className={`label-pill text-[10px] border ${IMPACT_COLORS[action.impact]}`}>
+                  <span className={`label-pill text-xs border ${IMPACT_COLORS[action.impact]}`}>
                     {action.impact} impact
                   </span>
                 </div>
@@ -239,7 +345,7 @@ export default function Report() {
 
         {/* ── 30 / 60 / 90-day plan ─────────────────────────────────── */}
         <div className="animate-in" style={{ animationDelay: '0.5s' }}>
-          <p className="section-label mb-2">Your Roadmap</p>
+          <p className="section-label mb-2 text-sm">Your Roadmap</p>
           <h2 className="text-2xl font-black text-white uppercase mb-6">90-Day Action Plan</h2>
 
           {/* Tabs */}
@@ -248,10 +354,10 @@ export default function Report() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+                className={`px-6 py-2.5 rounded-lg text-base font-semibold transition-all ${
                   activeTab === tab
                     ? 'bg-blue-primary text-white shadow-blue-glow'
-                    : 'text-white/50 hover:text-white/80'
+                    : 'text-white/60 hover:text-white/80'
                 }`}
               >
                 Day {tab}
@@ -268,22 +374,22 @@ export default function Report() {
 
         {/* ── Recommended systems ───────────────────────────────────── */}
         <div className="animate-in" style={{ animationDelay: '0.6s' }}>
-          <p className="section-label mb-2">Tooling</p>
+          <p className="section-label mb-2 text-sm">Tooling</p>
           <h2 className="text-2xl font-black text-white uppercase mb-6">Recommended Systems</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {report.recommended_systems.map(sys => (
-              <div key={sys.tool} className="card p-5">
+              <div key={sys.tool} className="card p-6">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-primary/20 border border-blue-primary/30 flex items-center justify-center">
-                    <span className="text-blue-300 text-xs font-bold">{sys.tool[0]}</span>
+                  <div className="w-10 h-10 rounded-lg bg-blue-primary/20 border border-blue-primary/30 flex items-center justify-center">
+                    <span className="text-blue-300 text-sm font-bold">{sys.tool[0]}</span>
                   </div>
                   <div>
-                    <p className="text-white font-bold text-sm">{sys.tool}</p>
-                    <p className="text-white/30 text-xs">{sys.category}</p>
+                    <p className="text-white font-bold text-base">{sys.tool}</p>
+                    <p className="text-white/50 text-sm">{sys.category}</p>
                   </div>
                 </div>
-                <p className="text-white/60 text-xs leading-relaxed mb-2">{sys.purpose}</p>
-                <p className="text-cyan/70 text-xs">{sys.why_now}</p>
+                <p className="text-white/75 text-sm leading-relaxed mb-2">{sys.purpose}</p>
+                <p className="text-cyan/80 text-sm">{sys.why_now}</p>
               </div>
             ))}
           </div>
@@ -291,15 +397,15 @@ export default function Report() {
 
         {/* ── Expected impact ───────────────────────────────────────── */}
         <div className="animate-in" style={{ animationDelay: '0.7s' }}>
-          <p className="section-label mb-2">If You Follow This Plan</p>
+          <p className="section-label mb-2 text-sm">If You Follow This Plan</p>
           <h2 className="text-2xl font-black text-white uppercase mb-6">Expected Impact</h2>
-          <div className="card p-8 space-y-5">
+          <div className="card p-8 space-y-6">
             {report.expected_impact.map(item => (
               <div key={item.area} className="flex gap-4">
                 <div className="w-1 self-stretch rounded-full bg-blue-primary/40 shrink-0" />
                 <div>
-                  <p className="text-white font-semibold text-sm mb-1">{item.area}</p>
-                  <p className="text-white/55 text-sm leading-relaxed">{item.improvement}</p>
+                  <p className="text-white font-semibold text-base mb-1">{item.area}</p>
+                  <p className="text-white/70 text-base leading-relaxed">{item.improvement}</p>
                 </div>
               </div>
             ))}
@@ -312,22 +418,21 @@ export default function Report() {
           <div className="absolute inset-0 rounded-2xl border border-blue-primary/30" />
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-primary/15 rounded-full blur-[60px] pointer-events-none" />
           <div className="relative p-8 md:p-12 text-center">
-            <p className="section-label mb-4">Next Step</p>
+            <p className="section-label mb-4 text-sm">Next Step</p>
             <h2 className="text-3xl md:text-4xl font-black text-white uppercase mb-4 leading-tight">
               {report.next_step_cta.headline}
             </h2>
-            <p className="text-white/60 text-base leading-relaxed mb-8 max-w-xl mx-auto">
+            <p className="text-white/75 text-lg leading-relaxed mb-8 max-w-xl mx-auto">
               {report.next_step_cta.body}
             </p>
-            <a
-              href="#"
+            <button
               className="btn-primary text-base px-12 py-4 inline-flex mb-4"
-              onClick={e => e.preventDefault()}
+              onClick={() => setShowCalendly(true)}
             >
               {report.next_step_cta.button_text} →
-            </a>
+            </button>
             {report.next_step_cta.urgency_note && (
-              <p className="text-white/30 text-xs mt-4">{report.next_step_cta.urgency_note}</p>
+              <p className="text-white/50 text-sm mt-4">{report.next_step_cta.urgency_note}</p>
             )}
           </div>
         </div>
@@ -335,15 +440,31 @@ export default function Report() {
         {/* Footer */}
         <div className="text-center pb-8">
           <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="w-6 h-6 rounded-md bg-blue-primary flex items-center justify-center">
-              <span className="text-white font-black text-[10px]">C</span>
-            </div>
-            <span className="font-bold text-white/60 uppercase tracking-widest text-xs">Corex Operations</span>
+            <img src={corexLogo} alt="Corex Operations" className="h-6 w-auto opacity-60" />
           </div>
-          <p className="text-white/25 text-xs">
+          <p className="text-white/40 text-sm">
             This report was generated based on your assessment answers. Results are indicative and intended to guide operational planning.
           </p>
         </div>
+
+      {/* Calendly Modal */}
+      {showCalendly && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowCalendly(false)}>
+          <div className="relative w-full max-w-2xl mx-4 bg-background rounded-2xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setShowCalendly(false)}
+              className="absolute top-3 right-3 z-10 text-foreground/60 hover:text-foreground text-2xl leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+            >
+              ×
+            </button>
+            <div
+              className="calendly-inline-widget"
+              data-url="https://calendly.com/eamonn-corexoperations/30min?hide_event_type_details=1&hide_gdpr_banner=1"
+              style={{ minWidth: '320px', height: '700px' }}
+            />
+          </div>
+        </div>
+      )}
 
       </main>
     </div>

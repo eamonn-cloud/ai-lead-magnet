@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import corexLogo from '../assets/corex-logo.webp'
 import type { QuizState } from '../lib/types'
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -47,7 +48,7 @@ const CATEGORY_STEPS: CategoryStep[] = [
       {
         key: 'q2',
         text: 'Are client handoffs between team members handled through a clear, standardised process?',
-        noLabel:        'Ad hoc — things fall through the cracks',
+        noLabel:        'Ad hoc - things fall through the cracks',
         partiallyLabel: 'Informal norms exist, no formal process',
         yesLabel:       'Clear handoff steps with checklists',
       },
@@ -317,9 +318,7 @@ function LoadingScreen({ onComplete }: { onComplete: () => void }) {
         <div className="w-24 h-24 rounded-full bg-navy-dark border border-blue-primary/30 flex items-center justify-center relative">
           <div className="absolute inset-0 rounded-full border border-blue-primary/20 animate-ping" style={{ animationDuration: '2s' }} />
           <div className="absolute inset-[-8px] rounded-full border border-blue-primary/10 animate-ping" style={{ animationDuration: '2.5s' }} />
-          <div className="w-8 h-8 rounded-lg bg-blue-primary flex items-center justify-center">
-            <span className="text-white font-black text-sm">C</span>
-          </div>
+          <img src={corexLogo} alt="Corex Operations" className="h-8 w-auto" />
         </div>
       </div>
 
@@ -418,9 +417,25 @@ export default function Quiz() {
 
   const handleComplete = useCallback(() => {
     localStorage.setItem('quiz_report', 'demo')
+    localStorage.setItem('quiz_company_name', state.companyName)
+    localStorage.setItem('quiz_form_data', JSON.stringify({
+      name: state.name,
+      email: state.email,
+      companyName: state.companyName,
+      website: state.website,
+      revenueBand: state.revenueBand,
+      teamSize: state.teamSize,
+      services: state.services,
+      pmTool: state.pmTool,
+      crm: state.crm,
+      biggestBottleneck: state.biggestBottleneck,
+      mainGoal: state.mainGoal,
+      implementationHelp: state.implementationHelp,
+    }))
+    localStorage.setItem('quiz_answers', JSON.stringify(state.answers))
     localStorage.removeItem('quiz_state')
     navigate('/report/demo')
-  }, [navigate])
+  }, [navigate, state])
 
   const validateStep = (): boolean => {
     switch (state.step) {
@@ -485,10 +500,7 @@ export default function Quiz() {
       {/* Nav */}
       <nav className="relative z-10 flex items-center justify-between px-6 md:px-12 py-5 border-b border-white/8">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-md bg-blue-primary flex items-center justify-center">
-            <span className="text-white font-black text-xs">C</span>
-          </div>
-          <span className="font-bold text-white uppercase tracking-widest text-xs hidden sm:block">Corex Operations</span>
+          <img src={corexLogo} alt="Corex Operations" className="h-7 w-auto" />
         </div>
 
         {/* Progress */}
@@ -724,7 +736,7 @@ export default function Quiz() {
             <div>
               <p className="section-label mb-3">Almost Done</p>
               <h2 className="text-3xl font-black text-white uppercase mb-2">Where should we send your plan?</h2>
-              <p className="text-white/50 text-sm mb-8">Your report generates immediately. No spam, no sequences — just your plan.</p>
+              <p className="text-white/50 text-sm mb-8">Your report generates immediately. No spam, no sequences - just your plan.</p>
 
               <div className="space-y-5">
                 <div>

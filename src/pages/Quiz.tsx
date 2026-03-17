@@ -526,19 +526,30 @@ export default function Quiz() {
             <div className="text-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan/30 bg-cyan/5 mb-8">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan animate-pulse-slow" />
-                <span className="text-cyan text-xs font-semibold uppercase tracking-[0.15em]">Agency Ops Audit</span>
+                <span className="text-cyan text-xs font-semibold uppercase tracking-[0.15em]">Free Agency Diagnostic</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-black text-white uppercase leading-tight mb-4">
-                Let's diagnose<br />your agency.
+                Most agencies<br />score below 50.<br /><span className="text-gradient">Where do you stand?</span>
               </h1>
-              <p className="text-white/60 text-base leading-relaxed mb-10 max-w-lg mx-auto">
+              <p className="text-white/60 text-base leading-relaxed mb-8 max-w-lg mx-auto">
                 14 questions across 7 operational areas. Takes about 4 minutes. You'll get a personalised 90-day operational plan the moment you're done.
               </p>
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-3 mb-4">
                 <button onClick={() => set({ step: 1 })} className="btn-primary text-base px-12 py-4">
-                  Start the Audit →
+                  Get My Agency Score →
                 </button>
                 <p className="text-white/30 text-xs">No account needed · Free · Instant results</p>
+              </div>
+              <p className="text-white/30 text-xs mb-6 max-w-sm mx-auto">
+                Agencies that don't know their bottleneck spend 6–12 months fixing the wrong thing.
+              </p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5">
+                <div className="flex -space-x-1.5">
+                  {['bg-blue-400', 'bg-emerald-400', 'bg-amber-400', 'bg-purple-400'].map((c, i) => (
+                    <div key={i} className={`w-5 h-5 rounded-full ${c} border-2 border-navy-dark`} />
+                  ))}
+                </div>
+                <span className="text-white/50 text-xs">Join <span className="text-white font-semibold">127 agency owners</span> who've taken the audit this month</span>
               </div>
             </div>
           )}
